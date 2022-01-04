@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS access_manege (
 CREATE TABLE IF NOT EXISTS attendance_information (
     user_id VARCHAR(50),
     punch BOOLEAN,
-    attendance_date TIMESTAMP,
+    attendance_date DATE,
     start_time TIMESTAMP,
     end_time TIMESTAMP,
     PRIMARY KEY(user_id, punch, attendance_date)

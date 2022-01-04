@@ -9,8 +9,23 @@
 	<!-- th:fragmentが付いているタグ内のHTMLが先程のテンプレート用のHTML内に追加される -->
 	<div th:fragment="home_contents">
 		<div class="page-header">
-			<h1>ホーム</h1>
-		</div>
+			<h1>勤怠</h1>
+			</div>
+			<table class="table table-bordered table-hover table-striped">
+		        <tr>
+		            <th class="info col-sm-2">氏名</th>
+		            <th class="info col-sm-2">勤怠情報</th>
+		            <th class="info col-sm-2">勤怠情報詳細</th>
+		        </tr>
+		        <tr>
+		        	<td th:text="${userName}"></td>
+		            <td th:each="infor : ${userHome}" th:text="${punch} ? '出勤' : '退勤'"></td>
+		            <td th:text="${#dates.format(attendanceDate, 'YYYY/MM/dd')}"></td>
+		        </tr>
+		        
+		    </table>
+		    
+		
 	</div>
 
 </body>

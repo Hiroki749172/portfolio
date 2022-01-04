@@ -19,7 +19,7 @@ public interface UserDao {
 	public User selectOne(String userId) throws DataAccessException;
 	
 	//user_masterテーブルのパスワードを1件取得
-	public User selectPass(String userId) throws DataAccessException;
+	public User selectPass(String password) throws DataAccessException;
 	
 	//user_masterテーブルの全データを取得
 	public List<User> selectMany() throws DataAccessException;
@@ -53,6 +53,7 @@ public interface UserDao {
 	
 	//attendance_informationテーブルの全データを取得
 	public List<User> selectManyFor() throws DataAccessException;
+
 }
 
 /*リポジトリクラスのインターフェースを作る。

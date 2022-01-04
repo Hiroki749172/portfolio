@@ -40,6 +40,15 @@ public class HomeController {
 		return radio;
 	}
 	
+	private Map<String, String> radioPunch;
+	
+	private Map<String, String> initRadioPunch(){
+		Map<String, String> radio = new LinkedHashMap<>();
+		radio.put("出勤", "true");
+		radio.put("退勤", "false");
+		return radio;
+	}
+	
 	//ホーム画面用のGETメソッド
 	@GetMapping("/home")
 	public String getHome(Model model) {
@@ -54,12 +63,15 @@ public class HomeController {
 		//コンテンツ部分にユーザー一覧画面を表示するための文字列を登録
 		model.addAttribute("contents", "login/userList :: userList_contents");
 		
+		radioMaster = initRadioMaster();
+		model.addAttribute("radioMaster", radioMaster);
+		
 		//社員管理画面の生成（Modelから値を取得して表示するためです）
 		List<User> userList = userService.selectMany();
 		
 		//Modelにユーザーリストを登録(複数検索結果)
 		model.addAttribute("userList", userList);
-		
+
 		//データ件数を取得（カウント結果）
 		int count = userService.count();
 		model.addAttribute("userListCount", count);
@@ -74,31 +86,21 @@ public class HomeController {
 	public String getUserDetail(@ModelAttribute SignupForm form, Model model, @PathVariable("id") String userId) {
 		//ユーザーID確認（デバック）
 		System.out.println("userId = " + userId);
-//		System.out.println("password = " + password);
 		
 		//コンテンツ部分にユーザー詳細を表示するための文字列を登録
 		model.addAttribute("contents", "login/userDetail :: userDetail_contents");
 		
 		//管理者区分用ラジオボタンの初期化
 		radioMaster = initRadioMaster();
-//		radioPunch = initRadioPunch();
 		
 		//ラジオボタン用のMapをModelに登録
 		model.addAttribute("radioMaster", radioMaster);
-//		model.addAttribute("radioPunch", radioPunch);
 		
 		//ユーザーIDのチェック
 		if(userId != null && userId.length() > 0) {
 			//ユーザー情報を取得
 			User user = userService.selectOne(userId);
-//			int infor = userService.insertFor(user);
 
-//			User infor = userService.selectFor(userId);
-//			infor.setUserId(infor.getUserId());
-//			infor.setAttendanceDate(infor.getAttendanceDate());
-			
-//			model.addAttribute("infor", infor);
-			
 			//Userクラスをフォームクラスに変換
 			form.setUserId(user.getUserId());
 			form.setPassword(user.getPassword());
@@ -111,29 +113,30 @@ public class HomeController {
 		return "login/homeLayout";
 	}
 	
-	@GetMapping("/pass/{id:.+}/pass/{pass:.+}")
-	public String getPass(@ModelAttribute SignupForm form, Model model, 
-			@PathVariable("id") String userId, @PathVariable("pass") String password) {
-		//コンソールにパスワード確認の出力
-		System.out.println("password = " + password);
-		
-		//コンテンツ部分にpass.htmlを表示するための文字列を登録
-		model.addAttribute("contents", "login/pass :: pass_contents");
-		
-		//パスワードの整合性チェック
-		if(userId != null && userId.length() > 0) {
-			if(password != null && password.length() > 0) {
-				User user = userService.selectPass(userId);
+	@GetMapping("/pass/{id:.+}")
+	public String getPass(@ModelAttribute SignupForm form, Model model, @PathVariable("id") String userId) {
+		//ユーザーID確認（デバック）
+				System.out.println("userId = " + userId);
 				
-				form.setUserId(user.getUserId());
-				form.setPassword(user.getPassword());
+				//コンテンツ部分にユーザー詳細を表示するための文字列を登録
+				model.addAttribute("contents", "login/pass :: pass_contents");
 				
-				model.addAttribute("signForm", form);
+				
+				
+				//ユーザーIDのチェック
+				if(userId != null && userId.length() > 0) {
+					//ユーザー情報を取得
+					User user = userService.selectOne(userId);
+
+					//Userクラスをフォームクラスに変換
+					form.setPassword(user.getPassword());
+					
+					//Modelに登録
+					model.addAttribute("signupForm", form);
+				}
+				return "login/homeLayout";
 			}
-		}
-		
-		return "login/homeLayout";
-	}
+	
 	
 	@PostMapping(value="/pass", params="update")
 	public String postPasswordUpdate(@ModelAttribute SignupForm form, Model model) {
@@ -154,7 +157,7 @@ public class HomeController {
 		} catch(DataAccessException e) {
 			model.addAttribute("result", "更新失敗（トランザクションテスト）");
 		}
-		return getHome(model);
+		return "redirect:/home";
 	}
 	
 	//ログアウト用メソッド
@@ -251,6 +254,24 @@ public class HomeController {
 		public String getAdmin(Model model) {
 			//コンテンツ部分に社員編集を表示する為の文字列を登録
 			model.addAttribute("contents", "login/admin :: admin_contents");
+			return "login/homeLayout";
+		}
+		
+		
+		@PostMapping("/home")
+		public String postHome(Model model, String userId) {
+			model.addAttribute("contents", "login/admin :: admin_contents");
+			radioPunch = initRadioPunch();
+			model.addAttribute("radioPunch", radioPunch);
+			
+			User infor = userService.selectFor(userId);
+			model.addAttribute("punch", infor.isPunch());
+			model.addAttribute("attendanceDate", infor.getAttendanceDate());
+//			infor.getUserId();
+//			infor.isPunch();
+//			infor.getAttendanceDate();
+			
+			
 			return "login/homeLayout";
 		}
 		

@@ -13,7 +13,6 @@ public class User {
 	private String password;
 	private String userName;
 	private String master;
-	//private String role;
 	
 	private Integer ipAddress;
 	private Time loginTime;

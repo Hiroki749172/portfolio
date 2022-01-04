@@ -42,9 +42,18 @@ public class UserService {
 		return result;
 	}
 	
-	public int insertFor(User user) {
-		return dao.insertFor(user);
-		
+	public boolean insertFor(User user) {
+		//insert実行
+				int rowNumber = dao.insertFor(user);
+				
+				//判定用変数
+				boolean result = false;
+				
+				if(rowNumber > 0) {
+					//insert成功
+					result = true;
+				}
+				return result;
 	}
 	
 	//カウント用メソッド
@@ -125,8 +134,8 @@ public class UserService {
 		return dao.count4();
 	}
 
-	public User selectPass(String userId) {
-		return dao.selectPass(userId);
+	public User selectPass(String password) {
+		return dao.selectPass(password);
 	}
 	
 }

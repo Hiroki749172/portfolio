@@ -82,7 +82,16 @@ public class UserDaoJdbcImpl implements UserDao {
 		user.setPassword((String) map.get("password"));
 		user.setUserName((String) map.get("user_name"));
 		user.setMaster((String) map.get("master"));
-		//user.setRole((String)map.get("role"));
+		return user;
+	}
+	//user_masterテーブルのパスワードを1件取得
+	@Override
+	public User selectPass(String password) throws DataAccessException {
+		Map<String, Object> map = jdbc.queryForMap("SELECT password FROM user_master WHERE password = ?", password);
+		User user = new User();
+		
+		user.setPassword((String) map.get("password"));
+		
 		return user;
 	}
 	
@@ -111,7 +120,6 @@ public class UserDaoJdbcImpl implements UserDao {
 			user.setPassword((String)map.get("password"));
 			user.setUserName((String)map.get("user_name"));
 			user.setMaster((String)map.get("master"));
-			//user.setRole((String)map.get("role"));
 			
 			//結果返却用のListに追加
 			userList.add(user);
@@ -228,15 +236,15 @@ public class UserDaoJdbcImpl implements UserDao {
 	//attendance_informationテーブルのデータを１件取得
 	@Override
 	public User selectFor(String userId) throws DataAccessException {
-		Map<String, Object> map = jdbc.queryForMap("SELECT * FROM attendance_information"
+		Map<String, Object> map = jdbc.queryForMap("SELECT user_id, punch, attendance_date FROM attendance_information"
 				+ " WHERE user_id = ?", userId);
 		User user = new User();
 		
 		user.setUserId((String) map.get("user_id"));
 		user.setPunch((Boolean) map.get("punch"));
-		user.setAttendanceDate((Timestamp) map.get("attendance_date"));
-		user.setStartTime((Timestamp) map.get("start_time"));
-		user.setEndTime((Timestamp) map.get("end_time"));
+		user.setAttendanceDate((Date) map.get("attendance_date"));
+//		user.setStartTime((Timestamp) map.get("start_time"));
+//		user.setEndTime((Timestamp) map.get("end_time"));
 		
 		return user;
 	}
@@ -259,20 +267,6 @@ public class UserDaoJdbcImpl implements UserDao {
 		}
 		return userList;
 	}
-
-	//user_masterテーブルのパスワードを1件取得
-	@Override
-	public User selectPass(String userId) throws DataAccessException {
-		Map<String, Object> map = jdbc.queryForMap("SELECT user_id, password FROM user_master WHERE user_id = ?", userId);
-		User user = new User();
-		
-		user.setUserId((String) map.get("user_id"));
-		user.setPassword((String) map.get("password"));
-		
-		return user;
-	}
-
-	
 }
 
 //UserDaoインターフェースを実装したクラス
